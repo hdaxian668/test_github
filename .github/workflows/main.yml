@@ -1,25 +1,19 @@
-name: onRelease Databricks
-on: 
-  pull_request:
-    branches:
-      - main
-      - feature/**
-      - release/**
-    tags:
-      - 'v**'
-    types:
-      - opened
-      - closed
+name: Fail PR to master
+
+on:
+    pull_request:
+        branches:
+            - master
 
 jobs:
-  pr_CI_UAT:
-    if:                         github.event_name == 'pull_request' && github.event.action == 'opened' && contains(github.base_ref, 'release')
-    name:                       Checks
-    runs-on:                    ubuntu-latest
-    steps:
-      - run: |
-          echo "Insert Continuous Integration Tests"
-      - run: |
-          echo "${{ github.head_ref }}"
-          echo "${{ github.base_ref }}"
-      
+    fail_pr:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Fail PR to master
+              run: |
+                  if [[ "${{ github.event.pull_request.title }}" == "chore(dev): release"* ]]; then
+                    echo "PR title starts with 'chore(dev): release', allowing PR"
+                  else
+                    echo "Pull requests to the master branch are not allowed, target dev branch"
+                    exit 1
+                  fi

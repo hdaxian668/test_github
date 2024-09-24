@@ -1,0 +1,25 @@
+name: onRelease Databricks
+on: 
+  pull_request:
+    branches:
+      - main
+      - feature/**
+      - release/**
+    tags:
+      - 'v**'
+    types:
+      - opened
+      - closed
+
+jobs:
+  pr_CI_UAT:
+    if:                         github.event_name == 'pull_request' && github.event.action == 'opened' && contains(github.base_ref, 'release')
+    name:                       Checks
+    runs-on:                    ubuntu-latest
+    steps:
+      - run: |
+          echo "Insert Continuous Integration Tests"
+      - run: |
+          echo "${{ github.head_ref }}"
+          echo "${{ github.base_ref }}"
+      
